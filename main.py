@@ -7,6 +7,7 @@ import threading
 
 app = FastAPI()
 
+# Adicionar middleware CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
