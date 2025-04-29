@@ -110,6 +110,8 @@ def is_identity_question(question: str) -> bool:
         r"o que (é|e|eh) voc(ê|e)",
         r"me fale sobre voc(ê|e)",
         r"se apresente",
+        r"Me diz algo sobre voc(ê|e)",
+        r"Me diz algo sobre vc",
         r"qual sua identidade",
         r"quem te criou",
         r"quem te desenvolveu",
