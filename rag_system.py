@@ -85,12 +85,9 @@ graph = graph_builder.compile()
 
 prepare_vector_store()
 
-# Function to check if the question is about the chatbot's identity
 def is_identity_question(question: str) -> bool:
-    # Convert to lowercase for case-insensitive matching
     question_lower = question.lower()
-    
-    # Patterns that might indicate someone is asking about the chatbot's identity
+
     identity_patterns = [
         r"quem (é|e|eh|seria) voc(ê|e)",
         r"qual (é|e|eh) (o )?seu nome",
@@ -107,27 +104,20 @@ def is_identity_question(question: str) -> bool:
         r"what is your name",
         r"tell me about yourself"
     ]
-    
-    # Check if any pattern matches
     for pattern in identity_patterns:
         if re.search(pattern, question_lower):
             return True
     
     return False
 
-# Identity response
 IDENTITY_RESPONSE = "Eu sou Aurix, um assistente virtual criado pelo Portal Synthetica. Fui projetado para ajudar você a responder perguntas, criar conteúdo, resolver problemas, programar, estudar ou trabalhar em projetos, sempre buscando ser claro, direto e o mais útil possível."
 
 def ask_question(question: str):
-    # Check if it's an identity question
     if is_identity_question(question):
-        # Create a dummy document for context (to maintain the expected return structure)
         dummy_doc = Document(page_content="Identity information", metadata={})
         return {
             "question": question,
             "context": [dummy_doc],
             "answer": IDENTITY_RESPONSE
         }
-    
-    # If not an identity question, proceed with the normal RAG flow
     return graph.invoke({"question": question})

@@ -1,9 +1,9 @@
-import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from rag_system import ask_question
+from rag_system import ask_question, prepare_vector_store
 from speech import generate_speech
+import threading
 
 app = FastAPI()
 
@@ -14,6 +14,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+threading.Thread(target=prepare_vector_store, daemon=True).start()
 
 class QuestionRequest(BaseModel):
     question: str
@@ -37,8 +39,3 @@ async def speech(request: SpeechRequest):
 @app.get("/")
 def read_root():
     return {"message": "API da IA rodando! 🚀"}
-
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
