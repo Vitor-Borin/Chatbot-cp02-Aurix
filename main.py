@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from rag_system import ask_question, prepare_vector_store
 from speech import generate_speech
 import threading
+import os
 
 app = FastAPI()
 
-# Adicionar middleware CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,6 +17,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/static", StaticFiles(directory="."), name="static")
 
 threading.Thread(target=prepare_vector_store, daemon=True).start()
 
@@ -36,6 +40,10 @@ class SpeechRequest(BaseModel):
 async def speech(request: SpeechRequest):
     path = generate_speech(request.text)
     return {"audio_path": path}
+
+@app.get("/speech.mp3")
+async def get_speech():
+    return FileResponse("speech.mp3")
 
 @app.get("/")
 def read_root():
