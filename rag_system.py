@@ -34,18 +34,31 @@ urls = [
 def load_documents():
     docs = []
     youtube_links = [
-        "https://youtu.be/lZqSUSewvKU",
         "https://www.youtube.com/watch?v=uK6ZAvS8JAo",
         "https://www.youtube.com/watch?v=zxCY01vGXLM",
-        "https://www.youtube.com/watch?v=lZqSUSewvKU",
     ]
+    
     for l in youtube_links:
-        loader = YoutubeLoader.from_youtube_url(l, add_video_info=False)
-        transcript_list = YouTubeTranscriptApi.get_transcript(loader.video_id, languages=['pt'])
-        transcript = " ".join([entry['text'] for entry in transcript_list])
-        docs.append(Document(page_content=transcript, metadata=loader._metadata))
-    loader = UnstructuredURLLoader(urls=urls)
-    docs += loader.load()
+        try:
+            loader = YoutubeLoader.from_youtube_url(l, add_video_info=False)
+            try:
+                transcript_list = YouTubeTranscriptApi.get_transcript(loader.video_id, languages=['pt'])
+                transcript = " ".join([entry['text'] for entry in transcript_list])
+                docs.append(Document(page_content=transcript, metadata=loader._metadata))
+                print(f"Transcrição carregada com sucesso para: {l}")
+            except Exception as e:
+                print(f"Erro ao carregar transcrição para {l}: {str(e)}")
+                continue
+        except Exception as e:
+            print(f"Erro ao processar link do YouTube {l}: {str(e)}")
+            continue
+    
+    try:
+        loader = UnstructuredURLLoader(urls=urls)
+        docs += loader.load()
+    except Exception as e:
+        print(f"Erro ao carregar URLs: {str(e)}")
+    
     return docs
 
 def prepare_vector_store():
