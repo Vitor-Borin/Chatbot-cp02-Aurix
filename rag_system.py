@@ -103,6 +103,7 @@ def is_identity_question(question: str) -> bool:
 
     identity_patterns = [
         r"quem (é|e|eh|seria) voc(ê|e)",
+        r"quem (é|e|eh|seria) vc",
         r"qual (é|e|eh) (o )?seu nome",
         r"como voc(ê|e) se chama",
         r"quem (é|e|eh) aurix",
